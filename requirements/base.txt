@@ -1,0 +1,22 @@
+mkdir requirements
+```
+
+Create `requirements/base.txt`:
+```
+django==4.2.*
+djangorestframework==3.14.*
+djangorestframework-simplejwt==5.*
+django-cors-headers==4.*
+psycopg2-binary==2.9.*
+redis==5.*
+django-redis==5.*
+celery==5.*
+django-filter==23.*
+python-decouple==3.*
+drf-spectacular==0.26.*
+```
+
+Create `requirements/dev.txt`:
+```
+-r base.txt
+ipython
