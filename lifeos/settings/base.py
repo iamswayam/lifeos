@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_filters',
+    'drf_spectacular',
 
     # Our apps
     'apps.accounts',
@@ -102,3 +103,22 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+# API Documentation
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE':       'LifeOS API',
+    'DESCRIPTION': 'Personal productivity suite — Journal, Todos & Interview Tracker',
+    'VERSION':     '1.0.0',
+    'CONTACT':     {'name': 'Swayam Siddha Panda', 'url': 'https://github.com/iamswayam'},
+    'LICENSE':     {'name': 'MIT License'},
+}
