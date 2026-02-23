@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -122,3 +123,5 @@ SPECTACULAR_SETTINGS = {
     'CONTACT':     {'name': 'Swayam Siddha Panda', 'url': 'https://github.com/iamswayam'},
     'LICENSE':     {'name': 'MIT License'},
 }
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'

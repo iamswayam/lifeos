@@ -1,0 +1,76 @@
+name: LifeOS CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB:       lifeos_test
+          POSTGRES_USER:     lifeos_user
+          POSTGRES_PASSWORD: lifeos_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/dev.txt
+
+      - name: Run migrations
+        env:
+          DJANGO_SETTINGS_MODULE: lifeos.settings.ci
+          SECRET_KEY:             test-secret-key-for-ci-only
+          DB_NAME:                lifeos_test
+          DB_USER:                lifeos_user
+          DB_PASSWORD:            lifeos_pass
+          DB_HOST:                localhost
+          DB_PORT:                5432
+          REDIS_URL:              redis://localhost:6379/0
+        run: |
+          python manage.py migrate
+
+      - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: lifeos.settings.ci
+          SECRET_KEY:             test-secret-key-for-ci-only
+          DB_NAME:                lifeos_test
+          DB_USER:                lifeos_user
+          DB_PASSWORD:            lifeos_pass
+          DB_HOST:                localhost
+          DB_PORT:                5432
+          REDIS_URL:              redis://localhost:6379/0
+        run: |
+          python manage.py test --verbosity=2
