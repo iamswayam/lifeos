@@ -89,7 +89,7 @@ export default function Dashboard() {
       {/* Stats */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'14px', marginBottom:'24px' }}>
         <StatCard label="Journal Entries"  value={entries.length}    sub="This session"    topColor="linear-gradient(90deg,#fb923c,#fdba74)" />
-        <StatCard label="Completed Tasks"  value={completedCount}    sub="↑ Keep going!"   subColor="var(--green)" topColor="linear-gradient(90deg,#4ade80,#86efac)" />
+        <StatCard label="Completed Tasks"  value={completedCount}    sub={completedCount > 0 ? "↑ Keep going!" : "No tasks yet"} subColor="var(--green)" topColor="linear-gradient(90deg,#4ade80,#86efac)" />
         <StatCard label="Pending Tasks"    value={pendingCount}      sub={overdueCount > 0 ? `${overdueCount} overdue` : 'On track'} subColor={overdueCount > 0 ? 'var(--red)' : 'var(--muted)'} topColor="linear-gradient(90deg,#fbbf24,#fde68a)" />
         <StatCard label="Interviews"       value={intSummary.total || 0} sub={`${intSummary.selected || 0} selected`} subColor="var(--green)" topColor="linear-gradient(90deg,#7dd3fc,#bae6fd)" />
       </div>
