@@ -32,7 +32,7 @@ export default function Sidebar() {
 
       {/* LOGO */}
       <div style={{ padding: '0 20px 24px', borderBottom: '1px solid var(--border)', marginBottom: '20px' }}>
-        <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: '26px', letterSpacing: '-0.5px', lineHeight: 1 }}>
+        <div onClick={() => navigate('/dashboard')} style={{ fontFamily: 'Instrument Serif, serif', fontSize: '26px', letterSpacing: '-0.5px', lineHeight: 1, cursor: 'pointer' }}>
           <span style={{ color: 'var(--logo-life)', transition: 'color 0.3s' }}>Life</span>
           <span style={{ color: 'var(--logo-os)',   transition: 'color 0.3s' }}>OS</span>
         </div>
@@ -47,6 +47,7 @@ export default function Sidebar() {
           { to: '/journal',    icon: '📓', label: 'Journal' },
           { to: '/todos',      icon: '✓',  label: 'Todos' },
           { to: '/interviews', icon: '🎯', label: 'Interviews' },
+          { to: '/profile', icon: '◎', label: 'Profile' },
         ].map(({ to, icon, label }) => (
           <NavLink key={to} to={to} style={({ isActive }) => ({
             display: 'flex', alignItems: 'center', gap: '10px',
@@ -64,51 +65,49 @@ export default function Sidebar() {
       </div>
 
       {/* BOTTOM */}
-      <div style={{ marginTop: 'auto', padding: '16px 20px 0', borderTop: '1px solid var(--border)' }}>
+      <div style={{ marginTop: 'auto', padding: '16px 10px 0', borderTop: '1px solid var(--border)' }}>
 
         {/* Theme toggle */}
-        <div onClick={toggleTheme} style={{
-          display: 'flex', alignItems: 'center', gap: '10px',
-          padding: '9px 10px', borderRadius: '8px', cursor: 'pointer',
-          fontSize: '13.5px', color: 'var(--muted)', marginBottom: '4px',
-          transition: 'all 0.15s'
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--surface2)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        <div onClick={toggleTheme} style={{ display:'flex', alignItems:'center', gap:'10px', padding:'9px 10px', borderRadius:'8px', cursor:'pointer', fontSize:'13.5px', color:'var(--muted)', marginBottom:'4px', transition:'all 0.15s' }}
+          onMouseEnter={e => e.currentTarget.style.background='var(--surface2)'}
+          onMouseLeave={e => e.currentTarget.style.background='transparent'}
         >
-          <span style={{ fontSize: '15px', width: '18px', textAlign: 'center' }}>
+          <span style={{ fontSize:'15px', width:'18px', textAlign:'center' }}>
             {theme === 'dark' ? '☀️' : '🌙'}
           </span>
           {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
         </div>
 
         {/* Logout */}
-        <div onClick={handleLogout} style={{
-          display: 'flex', alignItems: 'center', gap: '10px',
-          padding: '9px 10px', borderRadius: '8px', cursor: 'pointer',
-          fontSize: '13.5px', color: 'var(--muted)', marginBottom: '12px',
-          transition: 'all 0.15s'
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--surface2)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        <div onClick={handleLogout} style={{ display:'flex', alignItems:'center', gap:'10px', padding:'9px 10px', borderRadius:'8px', cursor:'pointer', fontSize:'13.5px', color:'var(--muted)', marginBottom:'8px', transition:'all 0.15s' }}
+          onMouseEnter={e => e.currentTarget.style.background='var(--surface2)'}
+          onMouseLeave={e => e.currentTarget.style.background='transparent'}
         >
-          <span style={{ fontSize: '15px', width: '18px', textAlign: 'center' }}>↗</span>
+          <span style={{ fontSize:'15px', width:'18px', textAlign:'center' }}>↗</span>
           Logout
         </div>
 
-        {/* User */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', borderRadius: '8px' }}>
-          <div style={{
-            width: '32px', height: '32px', borderRadius: '8px',
-            background: 'linear-gradient(135deg, var(--logo-life), var(--logo-os))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '12px', fontWeight: 600, color: 'white', flexShrink: 0
-          }}>{initials}</div>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text)' }}>{user?.first_name?.split(' ')[0]}</div>
-            <div style={{ fontSize: '11px', color: 'var(--muted)' }}>{user?.username}</div>
+        {/* User profile card */}
+        <div onClick={() => navigate('/profile')} style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px', borderRadius:'10px', cursor:'pointer', transition:'all 0.15s', border:'1px solid transparent', marginBottom:'8px' }}
+          onMouseEnter={e => { e.currentTarget.style.background='var(--accent-bg)'; e.currentTarget.style.borderColor='var(--accent-soft)' }}
+          onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='transparent' }}
+        >
+          <div style={{ width:'36px', height:'36px', borderRadius:'10px', background:'linear-gradient(135deg, var(--logo-life), var(--logo-os))', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:600, color:'white', flexShrink:0, overflow:'hidden' }}>
+            {user?.avatar
+              ? <img src={user.avatar} alt="avatar" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+              : initials
+            }
           </div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontSize:'11px', color:'var(--muted)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>@{user?.username}</div>
+            <div style={{ fontSize:'13px', fontWeight:600, color:'var(--text)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+              {user?.first_name ? `${user?.first_name?.split(' ')[0]}`.trim() : user?.username}
+            </div>
+            
+          </div>
+          <div style={{ fontSize:'11px', color:'var(--accent)', opacity:0.7 }}>⚙</div>
         </div>
+
       </div>
     </aside>
   )

@@ -9,6 +9,8 @@ import Dashboard from './pages/dashboard/Dashboard'
 import Journal from './pages/journal/Journal'
 import Todos from './pages/todos/Todos'
 import Interviews from './pages/interviews/Interviews'
+import Profile from './pages/profile/Profile'
+
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -33,6 +35,7 @@ function AppRoutes() {
         <Route path="journal"    element={<Journal />} />
         <Route path="todos"      element={<Todos />} />
         <Route path="interviews" element={<Interviews />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Routes>
   )

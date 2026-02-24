@@ -2,17 +2,17 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import RegisterSerializer, LoginSerializer, UserProfileSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserProfileSerializer, ChangePasswordSerializer
 
 User = get_user_model()
 
 
 def get_tokens_for_user(user):
-    """Generate JWT access and refresh tokens for a user."""
     refresh = RefreshToken.for_user(user)
     return {
         'refresh': str(refresh),
@@ -31,8 +31,8 @@ class RegisterView(generics.CreateAPIView):
         user   = serializer.save()
         tokens = get_tokens_for_user(user)
         return Response({
-            'user':   UserProfileSerializer(user).data,
-            'tokens': tokens,
+            'user':    UserProfileSerializer(user).data,
+            'tokens':  tokens,
             'message': 'Account created successfully.'
         }, status=status.HTTP_201_CREATED)
 
@@ -56,8 +56,8 @@ class LoginView(APIView):
 
         tokens = get_tokens_for_user(user)
         return Response({
-            'user':   UserProfileSerializer(user).data,
-            'tokens': tokens,
+            'user':    UserProfileSerializer(user).data,
+            'tokens':  tokens,
             'message': 'Login successful.'
         }, status=status.HTTP_200_OK)
 
@@ -70,20 +70,26 @@ class LogoutView(APIView):
             refresh_token = request.data['refresh']
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(
-                {'message': 'Logout successful.'},
-                status=status.HTTP_200_OK
-            )
+            return Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
         except Exception:
-            return Response(
-                {'error': 'Invalid token.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'error': 'Invalid token.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class   = UserProfileSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes     = [MultiPartParser, FormParser, JSONParser]
 
     def get_object(self):
         return self.request.user
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save()
+        return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
