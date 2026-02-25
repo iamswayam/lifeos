@@ -9,3 +9,9 @@ celery==5.*
 django-filter==23.*
 python-decouple==3.*
 drf-spectacular==0.26.*
+python-dotenv
+Pillow
+requests
+google-auth
+django-allauth
+dj-rest-auth
