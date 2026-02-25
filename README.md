@@ -9,6 +9,10 @@ A full-stack productivity suite built with Django REST Framework + React. Clean,
 ![Django](https://img.shields.io/badge/Django-4.2-green)
 ![React](https://img.shields.io/badge/React-18-61dafb)
 
+## 🖥 Live UI Preview
+👉 [View Interactive Preview](https://iamswayam.github.io/lifeos/) — Switch between Dark & Light themes!
+
+
 ---
 
 ## Features
