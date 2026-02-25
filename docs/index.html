@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeOS — Theme Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  [data-theme="light"] {
+    --bg:#f8f7f4; --surface:#ffffff; --surface2:#f1f0ed;
+    --border:#e8e6e0; --border2:#d4d1ca;
+    --accent:#2563eb; --accent-bg:#eff6ff; --accent-soft:#bfdbfe;
+    --green:#16a34a; --green-bg:#f0fdf4;
+    --amber:#d97706; --amber-bg:#fffbeb;
+    --red:#dc2626; --red-bg:#fef2f2;
+    --text:#1c1917; --text2:#44403c; --muted:#78716c; --muted2:#a8a29e;
+    --logo-life:#1c1917; --logo-os:#2563eb;
+    --name-color:#2563eb;
+    --shadow:0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  [data-theme="dark"] {
+    --bg:#0d0d12; --surface:#13131c; --surface2:#1a1a26;
+    --border:#ffffff0c; --border2:#ffffff18;
+    --accent:#7dd3fc; --accent-bg:#7dd3fc12; --accent-soft:#7dd3fc30;
+    --green:#4ade80; --green-bg:#4ade8012;
+    --amber:#fbbf24; --amber-bg:#fbbf2412;
+    --red:#f87171; --red-bg:#f8717112;
+    --text:#f1f5f9; --text2:#cbd5e1; --muted:#64748b; --muted2:#475569;
+    --logo-life:#fb923c; --logo-os:#fdba74;
+    --name-color:#fb923c;
+    --shadow:0 2px 20px rgba(0,0,0,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family:'DM Sans',sans-serif;
+    background:var(--bg); color:var(--text);
+    min-height:100vh; display:flex;
+    transition:background 0.3s,color 0.3s;
+  }
+
+  /* SWITCHER */
+  .switcher {
+    position:fixed; top:18px; right:22px; z-index:999;
+    background:var(--surface); border:1px solid var(--border2);
+    border-radius:50px; padding:4px; display:flex; gap:2px;
+    box-shadow:var(--shadow); transition:all 0.3s;
+  }
+
+  .sw-btn {
+    padding:6px 14px; border-radius:50px; border:none;
+    font-size:12px; font-weight:500; cursor:pointer;
+    font-family:'DM Sans',sans-serif; color:var(--muted);
+    background:transparent; transition:all 0.2s;
+  }
+
+  .sw-btn.on { background:var(--accent); color:#0a0a0f; font-weight:600; }
+  [data-theme="light"] .sw-btn.on { color:white; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width:220px; min-height:100vh;
+    background:var(--surface); border-right:1px solid var(--border);
+    display:flex; flex-direction:column; padding:28px 0;
+    position:fixed; top:0; left:0; bottom:0;
+    transition:background 0.3s,border-color 0.3s;
+  }
+
+  .logo { padding:0 20px 24px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+
+  .logo-text { font-family:'Instrument Serif',serif; font-size:26px; letter-spacing:-0.5px; line-height:1; }
+  .logo-life { color:var(--logo-life); transition:color 0.3s; }
+  .logo-os   { color:var(--logo-os);   transition:color 0.3s; }
+  .logo-sub  { font-size:11px; color:var(--muted); margin-top:3px; }
+
+  .ng { padding:0 10px; margin-bottom:20px; }
+  .ng-label { font-size:10px; font-weight:600; color:var(--muted2); text-transform:uppercase; letter-spacing:1.5px; padding:0 10px; margin-bottom:4px; }
+
+  .ni {
+    display:flex; align-items:center; gap:10px;
+    padding:9px 10px; border-radius:8px; cursor:pointer;
+    font-size:13.5px; color:var(--muted);
+    transition:all 0.15s; margin-bottom:1px;
+  }
+
+  .ni:hover { background:var(--surface2); color:var(--text2); }
+  .ni.on    { background:var(--accent-bg); color:var(--accent); font-weight:500; }
+  .ni-icon  { font-size:15px; width:18px; text-align:center; }
+  .ni-count { margin-left:auto; font-size:11px; color:var(--accent); font-weight:600; }
+
+  .sb-foot {
+    margin-top:auto; padding:16px 20px 0;
+    border-top:1px solid var(--border);
+  }
+
+  .u-row {
+    display:flex; align-items:center; gap:10px;
+    padding:10px; border-radius:8px; cursor:pointer;
+    transition:all 0.12s;
+  }
+
+  .u-row:hover { background:var(--surface2); }
+
+  .av {
+    width:32px; height:32px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:600; color:white; flex-shrink:0;
+    transition:background 0.3s;
+  }
+
+  [data-theme="dark"]  .av { background:linear-gradient(135deg,#fb923c,#fdba74); }
+  [data-theme="light"] .av { background:linear-gradient(135deg,#2563eb,#7c3aed); }
+
+  .u-name  { font-size:13px; font-weight:500; color:var(--text); }
+  .u-email { font-size:11px; color:var(--muted); }
+
+  /* MAIN */
+  .main { margin-left:220px; flex:1; padding:36px 40px; max-width:calc(100vw - 220px); }
+
+  /* HEADER */
+  .ph {
+    display:flex; align-items:flex-start; justify-content:space-between;
+    margin-bottom:28px; padding-bottom:22px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .greeting { font-family:'Instrument Serif',serif; font-size:30px; letter-spacing:-0.5px; margin-bottom:4px; }
+
+  /* ★ NAME COLOR — orange in dark, blue in light ★ */
+  .greeting em { font-style:italic; color:var(--name-color); transition:color 0.3s; }
+
+  .pg-date { font-size:13px; color:var(--muted); }
+  .acts    { display:flex; gap:8px; }
+
+  .btn {
+    padding:8px 16px; border-radius:8px;
+    font-size:13px; font-weight:500; cursor:pointer; border:none;
+    font-family:'DM Sans',sans-serif; transition:all 0.15s;
+  }
+
+  .btn-p { background:var(--accent); color:#0a0a0f; font-weight:600; }
+  [data-theme="light"] .btn-p { color:white; }
+  .btn-p:hover { opacity:0.9; transform:translateY(-1px); }
+  .btn-o { background:var(--surface2); color:var(--text2); border:1px solid var(--border2); }
+  .btn-o:hover { background:var(--surface); }
+
+  /* STATS */
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+
+  .stat {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:18px;
+    transition:all 0.2s; position:relative; overflow:hidden;
+  }
+
+  .stat::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    opacity:0; transition:opacity 0.3s;
+  }
+
+  [data-theme="dark"] .stat::after { opacity:1; }
+  .s1::after { background:linear-gradient(90deg,#fb923c,#fdba74); }
+  .s2::after { background:linear-gradient(90deg,#4ade80,#86efac); }
+  .s3::after { background:linear-gradient(90deg,#fbbf24,#fde68a); }
+  .s4::after { background:linear-gradient(90deg,#7dd3fc,#bae6fd); }
+
+  .stat:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+
+  .st-top  { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .st-lbl  { font-size:11.5px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+  .st-icon { width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:14px; background:var(--accent-bg); }
+  .st-num  { font-family:'Instrument Serif',serif; font-size:34px; line-height:1; margin-bottom:4px; color:var(--text); }
+  .st-sub  { font-size:11.5px; color:var(--muted); }
+  .up      { color:var(--green); }
+  .warn    { color:var(--amber); }
+
+  /* GRID */
+  .g2 { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; margin-bottom:18px; }
+  .g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+
+  .card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; overflow:hidden;
+    transition:background 0.3s,border-color 0.3s,box-shadow 0.2s;
+  }
+
+  .card:hover { box-shadow:var(--shadow); }
+
+  .ch {
+    padding:15px 20px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+
+  .ct   { font-size:13.5px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:7px; }
+  .cl   { font-size:12px; color:var(--accent); cursor:pointer; }
+  .cl:hover { opacity:0.8; }
+  .cb   { padding:4px 20px; }
+  .cbp  { padding:16px 20px; }
+
+  /* JOURNAL */
+  .je { padding:13px 0; border-bottom:1px solid var(--border); cursor:pointer; transition:padding-left 0.12s; }
+  .je:last-child { border-bottom:none; }
+  .je:hover { padding-left:4px; }
+  .jr1 { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .jt  { font-size:13.5px; font-weight:500; color:var(--text); }
+  .jd  { font-size:11px; color:var(--muted2); }
+  .jp  { font-size:12.5px; color:var(--muted); line-height:1.6; margin-bottom:8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+  .mp  { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; padding:2px 8px; border-radius:20px; }
+  .mg  { background:var(--green-bg); color:var(--green); }
+  .mb  { background:var(--accent-bg); color:var(--accent); }
+
+  /* TODOS */
+  .todo { display:flex; align-items:flex-start; gap:10px; padding:11px 0; border-bottom:1px solid var(--border); }
+  .todo:last-child { border-bottom:none; }
+
+  .ck { width:17px; height:17px; border-radius:5px; border:1.5px solid var(--border2); flex-shrink:0; margin-top:1px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.12s; font-size:10px; }
+  .ck.done { background:var(--green); border-color:var(--green); color:white; }
+  .ck.done::after { content:'✓'; }
+
+  .tt    { font-size:13px; color:var(--text); margin-bottom:3px; }
+  .tt.dn { text-decoration:line-through; color:var(--muted2); }
+  .tmr   { display:flex; gap:8px; align-items:center; }
+
+  .tag { font-size:10.5px; font-weight:600; padding:1px 7px; border-radius:20px; text-transform:uppercase; letter-spacing:0.4px; }
+  .th  { background:var(--red-bg);   color:var(--red); }
+  .tm  { background:var(--amber-bg); color:var(--amber); }
+  .tl  { background:var(--green-bg); color:var(--green); }
+
+  .due     { font-size:11px; color:var(--muted2); }
+  .due.ov  { color:var(--red); font-weight:500; }
+
+  /* INTERVIEWS */
+  .ic { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:10px; cursor:pointer; transition:all 0.15s; }
+  .ic:hover { border-color:var(--accent); }
+  .ic:last-child { margin-bottom:0; }
+  .ic-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .ic-co  { font-size:14px; font-weight:600; color:var(--text); font-family:'Instrument Serif',serif; }
+  .ic-ro  { font-size:12px; color:var(--muted); margin-bottom:10px; }
+  .ic-ft  { display:flex; gap:10px; align-items:center; font-size:11.5px; color:var(--muted); }
+
+  .pill   { font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:20px; }
+  .p-bl   { background:var(--accent-bg); color:var(--accent); }
+  .p-am   { background:var(--amber-bg); color:var(--amber); }
+  .p-ac   { background:var(--accent); color:#0a0a0f; }
+  [data-theme="light"] .p-ac { color:white; }
+
+  /* UPCOMING */
+  .ui { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .ui:last-child { border-bottom:none; }
+  .db { width:42px; height:42px; border:1.5px solid var(--border2); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; background:var(--surface2); }
+  .dd { font-family:'Instrument Serif',serif; font-size:18px; line-height:1; color:var(--text); }
+  .dm { font-size:9px; text-transform:uppercase; color:var(--muted); letter-spacing:0.5px; }
+  .ui-info { flex:1; }
+  .ui-co   { font-size:13px; font-weight:500; margin-bottom:1px; }
+  .ui-ro   { font-size:11.5px; color:var(--muted); }
+  .ui-tm   { font-size:12px; color:var(--accent); font-weight:500; }
+
+  /* MOOD */
+  .mr { display:flex; gap:6px; align-items:flex-end; height:60px; }
+  .mc { display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; }
+  .mb2{ width:100%; border-radius:4px 4px 0 0; min-height:4px; }
+  .ml { font-size:10px; color:var(--muted2); }
+
+  .sb-box { background:var(--surface2); border-radius:8px; padding:10px; text-align:center; }
+  .sb-num { font-family:'Instrument Serif',serif; font-size:24px; }
+
+  /* BANNER */
+  .banner { background:var(--accent-bg); border:1px solid var(--accent-soft); border-radius:10px; padding:11px 18px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--accent); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  .stat { animation:fadeUp 0.35s ease both; }
+  .stat:nth-child(1){animation-delay:0.05s}
+  .stat:nth-child(2){animation-delay:0.10s}
+  .stat:nth-child(3){animation-delay:0.15s}
+  .stat:nth-child(4){animation-delay:0.20s}
+
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <button class="sw-btn" id="bl" onclick="setTheme('light')">☀️ Light</button>
+  <button class="sw-btn on" id="bd" onclick="setTheme('dark')">🌙 Dark</button>
+</div>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-text"><span class="logo-life">Life</span><span class="logo-os">OS</span></div>
+    <div class="logo-sub">Personal Operating System</div>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Overview</div>
+    <div class="ni on"><span class="ni-icon">⊞</span> Dashboard</div>
+    <div class="ni"><span class="ni-icon">📓</span> Journal <span class="ni-count">24</span></div>
+    <div class="ni"><span class="ni-icon">✓</span> Todos <span class="ni-count">8</span></div>
+    <div class="ni"><span class="ni-icon">🎯</span> Interviews <span class="ni-count">6</span></div>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Account</div>
+    <div class="ni"><span class="ni-icon">◎</span> Profile</div>
+    <div class="ni"><span class="ni-icon">⚙</span> Settings</div>
+    <div class="ni"><span class="ni-icon">↗</span> Logout</div>
+  </div>
+  <div class="sb-foot">
+    <div class="u-row">
+      <div class="av">SP</div>
+      <div>
+        <div class="u-name">Swayam Panda</div>
+        <div class="u-email">swayam@gmail.com</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="banner">
+    <span>✨ <strong>Theme Preview</strong> — Click ☀️ Light or 🌙 Dark (top right) to switch themes!</span>
+    <span style="opacity:0.6;font-size:12px;">Phase 8 Preview</span>
+  </div>
+
+  <div class="ph">
+    <div>
+      <div class="greeting">Good evening, <em>Swayam</em> 👋</div>
+      <div class="pg-date">Monday, 24 February 2026 — Here's your overview</div>
+    </div>
+    <div class="acts">
+      <button class="btn btn-o">+ New Todo</button>
+      <button class="btn btn-p">+ New Entry</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat s1">
+      <div class="st-top"><div class="st-lbl">Journal Entries</div><div class="st-icon">📓</div></div>
+      <div class="st-num">24</div><div class="st-sub up">↑ 3 this week</div>
+    </div>
+    <div class="stat s2">
+      <div class="st-top"><div class="st-lbl">Completed Tasks</div><div class="st-icon">✅</div></div>
+      <div class="st-num">12</div><div class="st-sub up">↑ 5 today</div>
+    </div>
+    <div class="stat s3">
+      <div class="st-top"><div class="st-lbl">Pending Tasks</div><div class="st-icon">⏳</div></div>
+      <div class="st-num">8</div><div class="st-sub warn">2 overdue</div>
+    </div>
+    <div class="stat s4">
+      <div class="st-top"><div class="st-lbl">Interviews</div><div class="st-icon">🎯</div></div>
+      <div class="st-num">6</div><div class="st-sub up">2 upcoming</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">📓 Recent Journal</div><span class="cl">View all →</span></div>
+      <div class="cb">
+        <div class="je">
+          <div class="jr1"><div class="jt">My first journal entry — updated</div><div class="jd">24 Feb</div></div>
+          <div class="jp">Today I started building LifeOS. It feels great to be building something real from scratch. Learning a lot about Django project structure and JWT auth...</div>
+          <span class="mp mg">😊 Great</span>
+        </div>
+        <div class="je">
+          <div class="jr1"><div class="jt">Debugging the CI pipeline</div><div class="jd">23 Feb</div></div>
+          <div class="jp">Spent the evening fixing GitHub Actions. The issue was a missing ci.py settings file. Once added, all 10 tests passed cleanly...</div>
+          <span class="mp mb">🙂 Good</span>
+        </div>
+        <div class="je">
+          <div class="jr1"><div class="jt">Started the LifeOS project</div><div class="jd">22 Feb</div></div>
+          <div class="jp">Decided to build a personal productivity suite. Excited to finally have a real portfolio project worth showing to recruiters...</div>
+          <span class="mp mg">😊 Great</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div class="card">
+        <div class="ch"><div class="ct">🎯 Upcoming Interviews</div><span class="cl">View all →</span></div>
+        <div class="cb">
+          <div class="ui">
+            <div class="db"><div class="dd">01</div><div class="dm">Mar</div></div>
+            <div class="ui-info"><div class="ui-co">Google</div><div class="ui-ro">Backend Engineer · Round 1</div></div>
+            <div class="ui-tm">10:00 AM</div>
+          </div>
+          <div class="ui">
+            <div class="db"><div class="dd">05</div><div class="dm">Mar</div></div>
+            <div class="ui-info"><div class="ui-co">Razorpay</div><div class="ui-ro">Django Dev · Technical</div></div>
+            <div class="ui-tm">2:00 PM</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">😊 Mood This Week</div></div>
+        <div class="cbp">
+          <div class="mr">
+            <div class="mc"><div class="mb2" style="height:52px;background:var(--green-bg)"></div><div class="ml">Mon</div></div>
+            <div class="mc"><div class="mb2" style="height:36px;background:var(--accent-bg)"></div><div class="ml">Tue</div></div>
+            <div class="mc"><div class="mb2" style="height:44px;background:var(--green-bg)"></div><div class="ml">Wed</div></div>
+            <div class="mc"><div class="mb2" style="height:28px;background:var(--amber-bg)"></div><div class="ml">Thu</div></div>
+            <div class="mc"><div class="mb2" style="height:52px;background:var(--green-bg)"></div><div class="ml">Fri</div></div>
+            <div class="mc"><div class="mb2" style="height:44px;background:var(--accent-bg)"></div><div class="ml">Sat</div></div>
+            <div class="mc"><div class="mb2" style="height:52px;background:var(--green-bg)"></div><div class="ml">Sun</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card" style="grid-column:span 2;">
+      <div class="ch"><div class="ct">✓ Active Todos</div><span class="cl">View all →</span></div>
+      <div class="cb">
+        <div class="todo"><div class="ck done"></div><div><div class="tt dn">Complete LifeOS Phase 4 — Todos App</div><div class="tmr"><span class="tag th">High</span><span class="due">Mar 1</span></div></div></div>
+        <div class="todo"><div class="ck"></div><div><div class="tt">Build React frontend for LifeOS</div><div class="tmr"><span class="tag th">High</span><span class="due">Mar 10</span></div></div></div>
+        <div class="todo"><div class="ck"></div><div><div class="tt">Prepare for Google screening round</div><div class="tmr"><span class="tag th">High</span><span class="due ov">Feb 28 — Overdue</span></div></div></div>
+        <div class="todo"><div class="ck"></div><div><div class="tt">Revise system design concepts</div><div class="tmr"><span class="tag tm">Medium</span><span class="due">Mar 5</span></div></div></div>
+        <div class="todo"><div class="ck done"></div><div><div class="tt dn">Set up Docker and CI/CD pipeline</div><div class="tmr"><span class="tag tm">Medium</span><span class="due">Feb 24</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">🎯 Interviews</div><span class="cl">All →</span></div>
+      <div class="cbp" style="padding-top:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+          <div class="sb-box"><div class="sb-num" style="color:var(--text);">6</div><div style="font-size:10.5px;color:var(--muted);margin-top:1px;">Total</div></div>
+          <div class="sb-box"><div class="sb-num" style="color:var(--green);">2</div><div style="font-size:10.5px;color:var(--muted);margin-top:1px;">Selected</div></div>
+        </div>
+        <div class="ic">
+          <div class="ic-top"><div class="ic-co">Google</div><span class="pill p-bl">Scheduled</span></div>
+          <div class="ic-ro">Backend Engineer</div>
+          <div class="ic-ft"><span class="pill p-ac">Round 1</span><span>Mar 1</span><span>Meet</span></div>
+        </div>
+        <div class="ic">
+          <div class="ic-top"><div class="ic-co">Razorpay</div><span class="pill p-am">On Hold</span></div>
+          <div class="ic-ro">Django Developer</div>
+          <div class="ic-ft"><span class="pill p-ac">Round 2</span><span>Mar 5</span><span>Zoom</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('bl').classList.toggle('on', t==='light');
+    document.getElementById('bd').classList.toggle('on', t==='dark');
+    localStorage.setItem('lifeos-theme', t);
+  }
+  setTheme(localStorage.getItem('lifeos-theme') || 'dark');
+</script>
+</body>
+</html>
