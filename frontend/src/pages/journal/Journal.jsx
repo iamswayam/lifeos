@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getEntries, createEntry, updateEntry, deleteEntry } from '../../api/journal'
 import toast from 'react-hot-toast'
 
@@ -8,6 +9,8 @@ const MOOD_EMOJI = { great:'😊', good:'🙂', neutral:'😐', bad:'😔', terr
 const emptyForm = { title:'', content:'', mood:'good', tags:'', date: new Date().toISOString().split('T')[0] }
 
 export default function Journal() {
+  const navigate = useNavigate()
+
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -36,6 +39,7 @@ export default function Journal() {
       } else {
         await createEntry(data)
         toast.success('Entry created!')
+        navigate('/dashboard')
       }
       setShowForm(false); setForm(emptyForm); setEditing(null); load()
     } catch { toast.error('Failed to save entry') }
