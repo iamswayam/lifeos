@@ -56,7 +56,7 @@ function MiniCalendar({ entries, upcoming }) {
   const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa']
 
   return (
-    <div ref={calRef} style={{ ...s.card, display:'flex', flexDirection:'column', height:'100%', position:'relative' }}>
+    <div ref={calRef} style={{ ...s.card, display:'flex', flexDirection:'column', position:'relative' }}>
       <div style={{ ...s.ch }}>
         <div style={s.ct}>📅 Calendar</div>
         <div style={{ display:'flex', gap:'4px' }}>
@@ -66,21 +66,17 @@ function MiniCalendar({ entries, upcoming }) {
         </div>
       </div>
 
-      <div style={{ padding:'10px 12px', flex:1 }}>
-        {/* Month label */}
+      <div style={{ padding:'10px 12px' }}>
         <div style={{ fontSize:'11px', color:'var(--muted)', marginBottom:'8px', fontWeight:500 }}>
           {days[0].toLocaleDateString('en-IN',{month:'long', year:'numeric'})}
         </div>
-
         <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:'3px' }}>
-          {/* Day names */}
           {dayNames.map(d => (
             <div key={d} style={{ textAlign:'center', fontSize:'9.5px', fontWeight:600, color:'var(--muted2)', paddingBottom:'4px' }}>{d}</div>
           ))}
-          {/* First week */}
-          {days.slice(0,7).map((d,i) => {
+          {days.map((d, i) => {
             const items = getItems(d)
-            const tod = isToday(d)
+            const tod   = isToday(d)
             return (
               <div key={i}
                 onMouseEnter={e => { if(items.length) { const r=e.currentTarget.getBoundingClientRect(); const cr=calRef.current.getBoundingClientRect(); setTooltip({show:true,items,x:r.left-cr.left,y:r.bottom-cr.top+4}) }}}
@@ -96,28 +92,8 @@ function MiniCalendar({ entries, upcoming }) {
               </div>
             )
           })}
-          {/* Second week */}
-          {days.slice(7,14).map((d,i) => {
-            const items = getItems(d)
-            const tod = isToday(d)
-            return (
-              <div key={i+7}
-                onMouseEnter={e => { if(items.length) { const r=e.currentTarget.getBoundingClientRect(); const cr=calRef.current.getBoundingClientRect(); setTooltip({show:true,items,x:r.left-cr.left,y:r.bottom-cr.top+4}) }}}
-                onMouseLeave={() => setTooltip({show:false,items:[]})}
-                style={{ textAlign:'center', padding:'5px 2px', borderRadius:'7px', background: tod?'var(--accent)':items.length?'var(--accent-bg)':'transparent', border: tod?'none':items.length?'1px solid var(--accent-soft)':'1px solid transparent', transition:'all 0.15s' }}
-              >
-                <div style={{ fontSize:'12px', fontWeight: tod?700:400, color: tod?'#0a0a0f':items.length?'var(--accent)':'var(--text)' }}>{d.getDate()}</div>
-                {items.length > 0 && (
-                  <div style={{ display:'flex', justifyContent:'center', gap:'2px', marginTop:'2px' }}>
-                    {items.slice(0,2).map((it,ii) => <div key={ii} style={{ width:'3px', height:'3px', borderRadius:'50%', background: it.type==='journal'?'var(--green)':'var(--accent)' }} />)}
-                  </div>
-                )}
-              </div>
-            )
-          })}
         </div>
 
-        {/* Legend */}
         <div style={{ display:'flex', gap:'10px', marginTop:'10px', paddingTop:'8px', borderTop:'1px solid var(--border)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:'4px' }}>
             <div style={{ width:'6px', height:'6px', borderRadius:'50%', background:'var(--green)' }} />
@@ -130,7 +106,6 @@ function MiniCalendar({ entries, upcoming }) {
         </div>
       </div>
 
-      {/* Tooltip */}
       {tooltip.show && (
         <div style={{ position:'absolute', top: tooltip.y, left: Math.min(tooltip.x, 120), zIndex:999, background:'var(--surface)', border:'1px solid var(--border2)', borderRadius:'8px', padding:'8px 10px', minWidth:'160px', boxShadow:'var(--shadow)', pointerEvents:'none' }}>
           {tooltip.items.map((it,i) => (
@@ -190,38 +165,43 @@ export default function Dashboard() {
 
   return (
     <div>
-      {/* HEADER */}
-      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'20px', paddingBottom:'18px', borderBottom:'1px solid var(--border)' }}>
-        <div>
-          <div style={{ fontFamily:'Instrument Serif, serif', fontSize:'28px', letterSpacing:'-0.5px', marginBottom:'3px' }}>
-            {greeting}, <em style={{ fontStyle:'italic', color:'var(--name-color)' }}>{user?.first_name?.split(' ')[0] || user?.username}</em> 👋
+
+      {/* ── HEADER: Greeting + Stat Cards + Buttons ── */}
+      <div style={{ marginBottom:'20px', paddingBottom:'18px', borderBottom:'1px solid var(--border)' }}>
+
+        {/* Top row: greeting + buttons */}
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'16px' }}>
+          <div>
+            <div style={{ fontFamily:'Instrument Serif, serif', fontSize:'28px', letterSpacing:'-0.5px', marginBottom:'3px' }}>
+              {greeting}, <em style={{ fontStyle:'italic', color:'var(--name-color)' }}>{user?.first_name?.split(' ')[0] || user?.username}</em> 👋
+            </div>
+            <div style={{ fontSize:'12.5px', color:'var(--muted)' }}>
+              {new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
+            </div>
           </div>
-          <div style={{ fontSize:'12.5px', color:'var(--muted)' }}>
-            {new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
+          <div style={{ display:'flex', gap:'8px' }}>
+            <button onClick={() => navigate('/todos')}   style={{ padding:'7px 14px', borderRadius:'8px', border:'1px solid var(--border2)', background:'var(--surface2)', color:'var(--text2)', fontSize:'12.5px', fontWeight:500, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}>+ New Todo</button>
+            <button onClick={() => navigate('/journal')} style={{ padding:'7px 14px', borderRadius:'8px', border:'none', background:'var(--accent)', color:'#0a0a0f', fontSize:'12.5px', fontWeight:600, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}>+ New Entry</button>
           </div>
         </div>
-        <div style={{ display:'flex', gap:'8px' }}>
-          <button onClick={() => navigate('/todos')}   style={{ padding:'7px 14px', borderRadius:'8px', border:'1px solid var(--border2)', background:'var(--surface2)', color:'var(--text2)', fontSize:'12.5px', fontWeight:500, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}>+ New Todo</button>
-          <button onClick={() => navigate('/journal')} style={{ padding:'7px 14px', borderRadius:'8px', border:'none', background:'var(--accent)', color:'#0a0a0f', fontSize:'12.5px', fontWeight:600, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}>+ New Entry</button>
+
+        {/* Stat Cards row — full width under greeting */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'10px' }}>
+          <StatCard label="Journal"    value={allEntries.length}      sub="entries"      topColor="linear-gradient(90deg,#fb923c,#fdba74)" onClick={() => navigate('/journal')} />
+          <StatCard label="Completed"  value={completedCount}         sub="tasks done"   subColor="var(--green)"  topColor="linear-gradient(90deg,#4ade80,#86efac)" onClick={() => navigate('/todos')} />
+          <StatCard label="Pending"    value={pendingCount}           sub={overdueCount > 0 ? `${overdueCount} overdue` : 'on track'} subColor={overdueCount > 0 ? 'var(--red)' : 'var(--muted)'} topColor="linear-gradient(90deg,#fbbf24,#fde68a)" onClick={() => navigate('/todos')} />
+          <StatCard label="Interviews" value={intSummary.total || 0}  sub={`${intSummary.selected||0} selected`} subColor="var(--green)" topColor="linear-gradient(90deg,#7dd3fc,#bae6fd)" onClick={() => navigate('/interviews')} />
         </div>
       </div>
 
-      {/* MAIN GRID: left (stats+journal+todos) | right (calendar+summary+upcoming) */}
-      <div style={{ display:'grid', gridTemplateColumns:'1.5fr 1fr', gap:'16px' }}>
+      {/* ── MAIN GRID ── */}
+      <div style={{ display:'grid', gridTemplateColumns:'1.5fr 1fr', gap:'16px', alignItems:'start' }}>
 
-        {/* ── LEFT COLUMN ── */}
+        {/* ── LEFT: Journal + Todos ── */}
         <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
 
-          {/* 4 Stat Cards */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'10px' }}>
-            <StatCard label="Journal"   value={allEntries.length}      sub="entries"      topColor="linear-gradient(90deg,#fb923c,#fdba74)" onClick={() => navigate('/journal')} />
-            <StatCard label="Completed" value={completedCount}         sub="tasks done"   subColor="var(--green)"  topColor="linear-gradient(90deg,#4ade80,#86efac)" onClick={() => navigate('/todos')} />
-            <StatCard label="Pending"   value={pendingCount}           sub={overdueCount > 0 ? `${overdueCount} overdue` : 'on track'} subColor={overdueCount > 0 ? 'var(--red)' : 'var(--muted)'} topColor="linear-gradient(90deg,#fbbf24,#fde68a)" onClick={() => navigate('/todos')} />
-            <StatCard label="Interviews" value={intSummary.total || 0} sub={`${intSummary.selected||0} selected`} subColor="var(--green)" topColor="linear-gradient(90deg,#7dd3fc,#bae6fd)" onClick={() => navigate('/interviews')} />
-          </div>
-
           {/* Recent Journal */}
-          <div style={{ ...s.card, display:'flex', flexDirection:'column', maxHeight:'320px' }}>
+          <div style={{ ...s.card, display:'flex', flexDirection:'column', maxHeight:'340px' }}>
             <div style={s.ch}>
               <div style={s.ct}>📓 Recent Journal</div>
               <span style={s.cl} onClick={() => navigate('/journal')}>View all →</span>
@@ -230,8 +210,8 @@ export default function Dashboard() {
               {entries.length === 0 && <div style={{ padding:'20px', textAlign:'center', color:'var(--muted)', fontSize:'13px' }}>No entries yet. <span style={{ color:'var(--accent)', cursor:'pointer' }} onClick={() => navigate('/journal')}>Write your first →</span></div>}
               {entries.map(e => (
                 <div key={e.id} onClick={() => navigate('/journal')}
-                  style={{ padding:'11px 0', borderBottom:'1px solid var(--border)', cursor:'pointer', transition:'all 0.15s', borderRadius:'4px', paddingLeft:'0' }}
-                  onMouseEnter={el => { el.currentTarget.style.paddingLeft='6px'; el.currentTarget.style.background='var(--surface2)' }}
+                  style={{ padding:'11px 0', borderBottom:'1px solid var(--border)', cursor:'pointer', transition:'all 0.15s', paddingLeft:'0' }}
+                  onMouseEnter={el => { el.currentTarget.style.paddingLeft='6px'; el.currentTarget.style.background='var(--surface2)'; el.currentTarget.style.borderRadius='4px' }}
                   onMouseLeave={el => { el.currentTarget.style.paddingLeft='0';   el.currentTarget.style.background='transparent' }}
                 >
                   <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'3px' }}>
@@ -248,7 +228,7 @@ export default function Dashboard() {
           </div>
 
           {/* Active Todos */}
-          <div style={{ ...s.card, display:'flex', flexDirection:'column', maxHeight:'300px' }}>
+          <div style={{ ...s.card, display:'flex', flexDirection:'column', maxHeight:'320px' }}>
             <div style={s.ch}>
               <div style={s.ct}>✓ Active Todos</div>
               <span style={s.cl} onClick={() => navigate('/todos')}>View all →</span>
@@ -257,11 +237,11 @@ export default function Dashboard() {
               {todos.length === 0 && <div style={{ padding:'20px', textAlign:'center', color:'var(--muted)', fontSize:'13px' }}>No todos yet. <span style={{ color:'var(--accent)', cursor:'pointer' }} onClick={() => navigate('/todos')}>Add one →</span></div>}
               {todos.map(t => (
                 <div key={t.id}
-                  style={{ display:'flex', alignItems:'flex-start', gap:'10px', padding:'10px 0', borderBottom:'1px solid var(--border)', transition:'all 0.15s', borderRadius:'4px' }}
-                  onMouseEnter={el => { el.currentTarget.style.paddingLeft='6px'; el.currentTarget.style.background='var(--surface2)' }}
+                  style={{ display:'flex', alignItems:'flex-start', gap:'10px', padding:'10px 0', borderBottom:'1px solid var(--border)', transition:'all 0.15s', paddingLeft:'0' }}
+                  onMouseEnter={el => { el.currentTarget.style.paddingLeft='6px'; el.currentTarget.style.background='var(--surface2)'; el.currentTarget.style.borderRadius='4px' }}
                   onMouseLeave={el => { el.currentTarget.style.paddingLeft='0';   el.currentTarget.style.background='transparent' }}
                 >
-                  <div onClick={() => handleToggle(t.id)} style={{ width:'16px', height:'16px', borderRadius:'4px', flexShrink:0, marginTop:'1px', border: t.status==='done'?'none':'1.5px solid var(--border2)', background: t.status==='done'?'var(--green)':'transparent', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontSize:'9px', color:'white', transition:'all 0.12s' }}>{t.status==='done'?'✓':''}</div>
+                  <div onClick={() => handleToggle(t.id)} style={{ width:'16px', height:'16px', borderRadius:'4px', flexShrink:0, marginTop:'1px', border: t.status==='done'?'none':'1.5px solid var(--border2)', background: t.status==='done'?'var(--green)':'transparent', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontSize:'9px', color:'white', transition:'all 0.12px' }}>{t.status==='done'?'✓':''}</div>
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:'12.5px', color:'var(--text)', marginBottom:'3px', textDecoration: t.status==='done'?'line-through':'none', opacity: t.status==='done'?0.5:1 }}>{t.title}</div>
                     <div style={{ display:'flex', gap:'6px', alignItems:'center' }}>
@@ -276,14 +256,14 @@ export default function Dashboard() {
 
         </div>
 
-        {/* ── RIGHT COLUMN ── */}
-        <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+        {/* ── RIGHT: Calendar + Interview Summary + Upcoming (equal heights) ── */}
+        <div style={{ display:'grid', gridTemplateRows:'1fr 1fr 1fr', gap:'14px', height:'660px' }}>
 
           {/* Calendar */}
           <MiniCalendar entries={allEntries} upcoming={upcoming} />
 
           {/* Interview Summary */}
-          <div style={{ ...s.card, cursor:'pointer', transition:'all 0.2s' }}
+          <div style={{ ...s.card, cursor:'pointer', transition:'all 0.2s', display:'flex', flexDirection:'column' }}
             onClick={() => navigate('/interviews')}
             onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='var(--shadow)' }}
             onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none' }}
@@ -292,8 +272,8 @@ export default function Dashboard() {
               <div style={s.ct}>📊 Interview Summary</div>
               <span style={{ fontSize:'11px', color:'var(--accent)' }}>View all →</span>
             </div>
-            <div style={{ padding:'12px 16px' }}>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'8px' }}>
+            <div style={{ padding:'12px 16px', flex:1, display:'flex', alignItems:'center' }}>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'8px', width:'100%' }}>
                 {[
                   { label:'Total',    value: intSummary.total    || 0, color:'var(--text)' },
                   { label:'Selected', value: intSummary.selected || 0, color:'var(--green)' },
@@ -310,7 +290,7 @@ export default function Dashboard() {
           </div>
 
           {/* Upcoming Interviews */}
-          <div style={{ ...s.card, display:'flex', flexDirection:'column', flex:1, minHeight:'200px' }}>
+          <div style={{ ...s.card, display:'flex', flexDirection:'column' }}>
             <div style={s.ch}>
               <div style={s.ct}>🎯 Upcoming Interviews</div>
               <span style={s.cl} onClick={() => navigate('/interviews')}>View all →</span>
@@ -319,8 +299,8 @@ export default function Dashboard() {
               {upcoming.length === 0 && <div style={{ padding:'20px', textAlign:'center', color:'var(--muted)', fontSize:'13px' }}>No upcoming interviews</div>}
               {upcoming.map(i => (
                 <div key={i.id}
-                  style={{ display:'flex', alignItems:'center', gap:'10px', padding:'11px 0', borderBottom:'1px solid var(--border)', transition:'all 0.15s', borderRadius:'4px' }}
-                  onMouseEnter={el => { el.currentTarget.style.paddingLeft='6px'; el.currentTarget.style.background='var(--surface2)' }}
+                  style={{ display:'flex', alignItems:'center', gap:'10px', padding:'11px 0', borderBottom:'1px solid var(--border)', transition:'all 0.15s', paddingLeft:'0' }}
+                  onMouseEnter={el => { el.currentTarget.style.paddingLeft='6px'; el.currentTarget.style.background='var(--surface2)'; el.currentTarget.style.borderRadius='4px' }}
                   onMouseLeave={el => { el.currentTarget.style.paddingLeft='0';   el.currentTarget.style.background='transparent' }}
                 >
                   <div style={{ width:'38px', height:'38px', border:'1.5px solid var(--border2)', borderRadius:'9px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'var(--surface2)', flexShrink:0 }}>
